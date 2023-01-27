@@ -5,6 +5,7 @@ let gameSection = document.getElementById('gameSection');
 let playerTurn = 0;
 let gameBoard = [['','',''],['','',''],['','','']];
 let gameEnd = false;
+let players = {0: '', 1: ''};
 
 function createElement(elemType,id='',className='',name='',type='',innerText='',htmlFor=''){
     let elem = document.createElement(elemType);
@@ -50,6 +51,8 @@ function constructDefPlayersState(){
     gameSection.append(labelInputFirstPlayer,inputFirstPlayer,br1,labelInputSecPlayer,inputSecPlayer,br2,gameStartBtn);
     gameStartBtn.addEventListener('click', (ev)=> {
         if(inputFirstPlayer.value !== '' && inputSecPlayer.value !== ''){
+            players[0]=inputFirstPlayer.value;
+            players[1]=inputSecPlayer.value;
             changeGameState(gameStates[1]);
         }
     });
@@ -130,7 +133,7 @@ function changeLineStyleToVictory(line){
     let initElem = line * 3;
     let secElem = initElem + 1;
     let thirdElem = secElem + 1;
-    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+    document.querySelectorAll('#gamezone-'+initElem+',#gamezone-'+secElem+',#gamezone-'+thirdElem).forEach((elem)=>{
         elem.classList.add('gamezone-victory');
     });
 }
@@ -139,7 +142,7 @@ function changeColumnStyleToVictory(column){
     let initElem = column;
     let secElem = initElem + 3;
     let thirdElem = secElem + 3;
-    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+    document.querySelectorAll('#gamezone-'+initElem+',#gamezone-'+secElem+',#gamezone-'+thirdElem).forEach((elem)=>{
         elem.classList.add('gamezone-victory');
     });
 }
@@ -152,7 +155,7 @@ function changeDiagStyleToVictory(winner){
         initElem = 2;
         thirdElem = 6;
     }
-    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+    document.querySelectorAll('#gamezone-'+initElem+',#gamezone-'+secElem+',#gamezone-'+thirdElem).forEach((elem)=>{
         elem.classList.add('gamezone-victory');
     });
 }
@@ -161,6 +164,17 @@ function endGame(zoneId,winner,typeOfVictory){
     gameEnd = true;
     let zoneLine = Math.floor(zoneId/3);
     let zoneColumn = zoneId%3;
+    let winnerPlayer = winner ==='X' ? players[0] : players[1];
+    document.getElementById('gameBoardInfo').innerText = 'Parabéns pela vitória, ' + winnerPlayer + '!';
+    let playAgainBtn = createElement('button','playAgainBtn','','','button','Jogar novamente');
+    playAgainBtn.addEventListener('click',(ev)=>{
+        changeGameState(gameStates[0]);
+        playerTurn = 0;
+        gameBoard = [['','',''],['','',''],['','','']];
+        gameEnd = false;
+        players = {0: '', 1: ''};
+    });
+    gameSection.appendChild(playAgainBtn);
     if(typeOfVictory == 'line'){
         changeLineStyleToVictory(zoneLine);
     } else if(typeOfVictory == 'column'){
@@ -197,7 +211,8 @@ function constructPlayState(){
     let numZones = 9;
     let gameZones = [];
 
-    let gameContainer = createElement('div','gameContainer','gameContainer','','','','');
+    let gameBoardInfo = createElement('div','gameBoardInfo','gameBoardInfo');
+    let gameContainer = createElement('div','gameContainer','gameContainer');
 
     for(let i=0;i<numZones;i++){
         let zone = createElement('div','gamezone-'+i,'gameZone','','','','');
@@ -217,6 +232,7 @@ function constructPlayState(){
                     zone.innerText = zoneInnerText;
                     zone.classList.add('zone-clicked');
                     playerTurn = (playerTurn + 1) % 2;
+                    document.getElementById('gameBoardInfoPlayerName').innerText = players[playerTurn];
                     let zoneLine = Math.floor(i/3);
                     let zoneColumn = i%3;
                     gameBoard[zoneLine][zoneColumn] = zoneInnerText;
@@ -230,7 +246,11 @@ function constructPlayState(){
         gameContainer.appendChild(gamezone);
     });
 
-    gameSection.appendChild(gameContainer);
+
+    let gameBoardInfoText = createElement('p','gameBoardInfoText','','','','Realize sua jogada, ');
+    let gameBoardInfoPlayerName = createElement('span','gameBoardInfoPlayerName','','','',players[0]);
+    gameBoardInfo.append(gameBoardInfoText,gameBoardInfoPlayerName);
+    gameSection.append(gameBoardInfo,gameContainer);
     
 }
 
@@ -239,9 +259,7 @@ function changeGameState(gameState){
         constructDefPlayersState();
     } else if(gameState==='play'){
         constructPlayState();
-    } else if(gameState==='result'){
-        constructResultState();
-    }    
+    }  
 }
 
 changeGameState(gameStates[0]);

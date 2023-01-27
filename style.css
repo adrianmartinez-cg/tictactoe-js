@@ -35,6 +35,10 @@ h1{
     font-size:32px;
 }
 
+#inputSecPlayer{
+    border: 2px solid rgb(3, 130, 173);
+}
+
 #gameStartBtn{
     background-color: transparent;
     border: 2px solid rgb(25, 188, 44);
@@ -51,6 +55,7 @@ h1{
 .nameLabel{
     font-size: 24px;
 }
+
 
 .gameZone{
     display: flex;
@@ -117,4 +122,28 @@ h1{
 
 .circle-click{
     color:rgb(3, 130, 173);
+}
+
+.gamezone-victory{
+    background-color: rgb(166, 251, 171);
+}
+
+#gameBoardInfo{
+    display:flex;
+    font-size: 24px;
+    font-family: 'Ubuntu',sans-serif;
+    font-weight: 300;
+}
+
+#playAgainBtn{
+    background-color: transparent;
+    border: 2px solid rgb(255, 55, 0);
+    padding:10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition:0.2s;
+}
+
+#playAgainBtn:hover{
+    border: 3px solid rgba(252, 61, 13, 0.562);
 }
