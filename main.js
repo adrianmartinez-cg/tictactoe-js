@@ -6,6 +6,7 @@ let playerTurn = 0;
 let gameBoard = [['','',''],['','',''],['','','']];
 let gameEnd = false;
 let players = {0: '', 1: ''};
+let numMoves = 0;
 
 function createElement(elemType,id='',className='',name='',type='',innerText='',htmlFor=''){
     let elem = document.createElement(elemType);
@@ -162,26 +163,31 @@ function changeDiagStyleToVictory(winner){
 
 function endGame(zoneId,winner,typeOfVictory){
     gameEnd = true;
-    let zoneLine = Math.floor(zoneId/3);
-    let zoneColumn = zoneId%3;
-    let winnerPlayer = winner ==='X' ? players[0] : players[1];
-    document.getElementById('gameBoardInfo').innerText = 'Parabéns pela vitória, ' + winnerPlayer + '!';
+    if(winner == ''){
+        document.getElementById('gameBoardInfo').innerText = 'Empate !';
+    } else {
+        let zoneLine = Math.floor(zoneId/3);
+        let zoneColumn = zoneId%3;
+        let winnerPlayer = winner ==='X' ? players[0] : players[1];
+        document.getElementById('gameBoardInfo').innerText = 'Parabéns pela vitória, ' + winnerPlayer + '!';
+        if(typeOfVictory == 'line'){
+            changeLineStyleToVictory(zoneLine);
+        } else if(typeOfVictory == 'column'){
+            changeColumnStyleToVictory(zoneColumn);
+        } else if(typeOfVictory == 'diag'){
+            changeDiagStyleToVictory(winner);
+        }
+    }
     let playAgainBtn = createElement('button','playAgainBtn','','','button','Jogar novamente');
     playAgainBtn.addEventListener('click',(ev)=>{
         changeGameState(gameStates[0]);
         playerTurn = 0;
+        numMoves = 0;
         gameBoard = [['','',''],['','',''],['','','']];
         gameEnd = false;
         players = {0: '', 1: ''};
     });
-    gameSection.appendChild(playAgainBtn);
-    if(typeOfVictory == 'line'){
-        changeLineStyleToVictory(zoneLine);
-    } else if(typeOfVictory == 'column'){
-        changeColumnStyleToVictory(zoneColumn);
-    } else if(typeOfVictory == 'diag'){
-        changeDiagStyleToVictory(winner);
-    }
+    gameSection.appendChild(playAgainBtn); 
 }
 
 function checkGameBoard(zoneId){
@@ -189,7 +195,7 @@ function checkGameBoard(zoneId){
     let typeOfVictory = '';
     winner = checkGameBoardLines();
     if(winner == ''){
-        winner = checkGameBoardColumns();
+    winner = checkGameBoardColumns();
         if(winner == ''){
             winner = checkGameBoardDiag();
             if(winner != ''){
@@ -204,6 +210,11 @@ function checkGameBoard(zoneId){
         typeOfVictory = 'line'
         endGame(zoneId,winner,typeOfVictory);
     }
+    if(numMoves == 9 && winner == ''){
+        endGame('','','');
+    }
+     
+    
 }
 
 function constructPlayState(){
@@ -232,6 +243,7 @@ function constructPlayState(){
                     zone.innerText = zoneInnerText;
                     zone.classList.add('zone-clicked');
                     playerTurn = (playerTurn + 1) % 2;
+                    numMoves++;
                     document.getElementById('gameBoardInfoPlayerName').innerText = players[playerTurn];
                     let zoneLine = Math.floor(i/3);
                     let zoneColumn = i%3;
