@@ -1,0 +1,120 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1{
+    margin-top: 25px;
+    font-family: 'Ubuntu',sans-serif;
+}
+
+.container{
+    display:flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 900px;
+    align-items: center;
+    margin: 0 auto;
+}
+
+#gameSection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+    margin-top: 100px;
+    flex-wrap: wrap;
+}
+
+.nameInput{
+    width: 100%;
+    border: 2px solid rgb(188, 25, 55);
+    border-radius: 10px;
+    height: 35px;
+    font-size:32px;
+}
+
+#gameStartBtn{
+    background-color: transparent;
+    border: 2px solid rgb(25, 188, 44);
+    padding:10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition:0.2s;
+}
+
+#gameStartBtn:hover{
+    border: 3px solid rgb(137, 252, 13);
+}
+
+.nameLabel{
+    font-size: 24px;
+}
+
+.gameZone{
+    display: flex;
+    width: 120px;
+    height:120px;
+    border: 2px solid rgb(52, 52, 52);
+    padding: 30px;
+    font-size: 32px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gameZone.zone-hover:hover{
+    border: 2px solid rgb(137, 252, 13);
+}
+
+.gameContainer{
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 400px;
+    gap:0px;
+    justify-content: center;
+    align-items: center;
+}
+
+#gamezone-0, #gamezone-1, #gamezone-2{
+    border-top:4px solid black;
+}
+
+#gamezone-2, #gamezone-5, #gamezone-8{
+    border-right:4px solid black;
+}
+
+#gamezone-6, #gamezone-7, #gamezone-8{
+    border-bottom:4px solid black;
+}
+
+#gamezone-0, #gamezone-3, #gamezone-6{
+    border-left:4px solid black;
+}
+
+#gamezone-0.zone-hover:hover, #gamezone-1.zone-hover:hover, #gamezone-2.zone-hover:hover{
+    border-top:4px solid rgb(108, 201, 9);
+}
+
+#gamezone-2.zone-hover:hover, #gamezone-5.zone-hover:hover, #gamezone-8.zone-hover:hover{
+    border-right:4px solid rgb(108, 201, 9);
+}
+
+#gamezone-6.zone-hover:hover, #gamezone-7.zone-hover:hover, #gamezone-8.zone-hover:hover{
+    border-bottom:4px solid rgb(108, 201, 9);
+}
+
+#gamezone-0.zone-hover:hover, #gamezone-3.zone-hover:hover, #gamezone-6:hover{
+    border-left:4px solid rgb(108, 201, 9);
+}
+
+.cross-click{
+    color: rgb(210, 0, 63);
+}
+
+.circle-click{
+    color:rgb(3, 130, 173);
+}
