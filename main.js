@@ -4,6 +4,7 @@ let gameStates = {0: 'defPlayers',
 let gameSection = document.getElementById('gameSection');
 let playerTurn = 0;
 let gameBoard = [['','',''],['','',''],['','','']];
+let gameEnd = false;
 
 function createElement(elemType,id='',className='',name='',type='',innerText='',htmlFor=''){
     let elem = document.createElement(elemType);
@@ -54,6 +55,143 @@ function constructDefPlayersState(){
     });
 }
 
+function checkGameBoardLines(){
+    let winner = '';
+    for(let i = 0 ; i < gameBoard.length; i++){
+        let initChar = gameBoard[i][0];
+        let completeLine = true;
+        for(let j = 1; j < gameBoard[0].length;j++){
+            if(gameBoard[i][j] != initChar){
+                completeLine = false;
+                break;
+            }
+        }
+        if(completeLine == true){
+            winner = initChar;
+            break;
+        }
+    }
+    
+    return winner;
+}
+
+function checkGameBoardColumns(){
+    let winner = '';
+    let numCols = 3;
+    for(let j=0; j < numCols; j++){
+        let initChar = gameBoard[0][j];
+        let completeColumn = true;
+        for(let i=1; i < gameBoard.length; i++){
+            if(gameBoard[i][j] !== initChar){
+                completeColumn = false;
+                break;
+            }
+        }
+        if(completeColumn){
+            winner = initChar;
+            break;
+        }
+    }
+    return winner;  
+}
+
+function checkGameBoardDiag(){
+    let winner = '';
+    let boardSize = 3;
+    let initChar = gameBoard[0][0];
+    let completeDiag = true;
+    for(let k = 1; k < boardSize; k++){
+        if(gameBoard[k][k] !== initChar){
+            completeDiag = false;
+            break;
+        }
+    }
+    if(completeDiag === true){
+        winner = initChar;
+    }
+    else {
+        completeDiag = true;
+        initChar = gameBoard[0][2];
+        for(let i = 1; i < boardSize; i++){
+            if(gameBoard[i][boardSize-1-i] !== initChar){
+                completeDiag = false;
+                break;
+            }
+        }
+        if(completeDiag === true){
+            winner = initChar;
+        }
+    }
+    return winner;
+
+}
+
+function changeLineStyleToVictory(line){
+    let initElem = line * 3;
+    let secElem = initElem + 1;
+    let thirdElem = secElem + 1;
+    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+        elem.classList.add('gamezone-victory');
+    });
+}
+
+function changeColumnStyleToVictory(column){
+    let initElem = column;
+    let secElem = initElem + 3;
+    let thirdElem = secElem + 3;
+    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+        elem.classList.add('gamezone-victory');
+    });
+}
+
+function changeDiagStyleToVictory(winner){
+    let initElem = 0;
+    let secElem = 4;
+    let thirdElem = 8;
+    if(gameBoard[0][2]==winner){
+        initElem = 2;
+        thirdElem = 6;
+    }
+    document.querySelectorAll('#gameZone-'+initElem+',#gameZone-'+secElem+',#gameZone-'+thirdElem).forEach((elem)=>{
+        elem.classList.add('gamezone-victory');
+    });
+}
+
+function endGame(zoneId,winner,typeOfVictory){
+    gameEnd = true;
+    let zoneLine = Math.floor(zoneId/3);
+    let zoneColumn = zoneId%3;
+    if(typeOfVictory == 'line'){
+        changeLineStyleToVictory(zoneLine);
+    } else if(typeOfVictory == 'column'){
+        changeColumnStyleToVictory(zoneColumn);
+    } else if(typeOfVictory == 'diag'){
+        changeDiagStyleToVictory(winner);
+    }
+}
+
+function checkGameBoard(zoneId){
+    let winner = '';
+    let typeOfVictory = '';
+    winner = checkGameBoardLines();
+    if(winner == ''){
+        winner = checkGameBoardColumns();
+        if(winner == ''){
+            winner = checkGameBoardDiag();
+            if(winner != ''){
+                typeOfVictory = 'diag';
+                endGame(zoneId,winner,typeOfVictory);
+            }
+        } else {
+            typeOfVictory = 'column';
+            endGame(zoneId,winner,typeOfVictory);
+        }
+    } else {
+        typeOfVictory = 'line'
+        endGame(zoneId,winner,typeOfVictory);
+    }
+}
+
 function constructPlayState(){
     removePreviousContent();
     let numZones = 9;
@@ -65,17 +203,25 @@ function constructPlayState(){
         let zone = createElement('div','gamezone-'+i,'gameZone','','','','');
         zone.classList.add('zone-hover');
         zone.addEventListener('click',(ev)=>{
-            if(!zone.classList.contains('zone-clicked')){
-                zone.classList.remove('zone-hover');
-                if(playerTurn===0){
-                    zone.innerText = 'X';
-                    zone.classList.add('cross-click');
-                } else if(playerTurn == 1){
-                    zone.innerText = 'O';
-                    zone.classList.add('circle-click');
+            if(!gameEnd){
+                if(!zone.classList.contains('zone-clicked')){
+                    zone.classList.remove('zone-hover');
+                    let zoneInnerText = '';
+                    if(playerTurn===0){
+                        zoneInnerText = 'X';
+                        zone.classList.add('cross-click');
+                    } else if(playerTurn == 1){
+                        zoneInnerText = 'O';
+                        zone.classList.add('circle-click');
+                    }
+                    zone.innerText = zoneInnerText;
+                    zone.classList.add('zone-clicked');
+                    playerTurn = (playerTurn + 1) % 2;
+                    let zoneLine = Math.floor(i/3);
+                    let zoneColumn = i%3;
+                    gameBoard[zoneLine][zoneColumn] = zoneInnerText;
+                    checkGameBoard(i);
                 }
-                zone.classList.add('zone-clicked');
-                playerTurn = (playerTurn + 1) % 2;
             }
         });
         gameZones.push(zone);
